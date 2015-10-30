@@ -2,12 +2,11 @@
 /**
  * Created by PhpStorm.
  * User: Kodemania
- * Date: 20/10/2015
- * Time: 7:06 PM
+ * Date: 29/10/2015
+ * Time: 9:59 PM
  */
     $this->load->view('admin/includes/head.php');
 ?>
-
 </head>
 <body>
 
@@ -19,7 +18,7 @@
     </div>
     <div class="row">
         <div class="col-lg-6 col-md-6 col-sm-6 col-md-offset-3 col-lg-offset-3 col-sm-offset-3">
-            <h2 class="text-center">Edit Slide</h2>
+            <h2 class="text-center">Add New Gallery</h2>
             <br>
             <?php if(validation_errors()){
                 ?>
@@ -35,30 +34,23 @@
                 </div>
             <?php
             } ?>
-            <?php echo form_open_multipart('admin/editSlideProcess',array('class'=>"form-horizontal")); ?>
-            <input type="hidden" name="id" value="<?php echo $slide->id; ?>"/>
+            <?php echo form_open_multipart('admin/addGalleryProcess',array('class'=>"form-horizontal")); ?>
             <div class="form-group">
-                <label for="title" class="col-sm-3 control-label">Slide Title</label>
+                <label for="title" class="col-sm-3 control-label">Title</label>
                 <div class="col-sm-9">
-                    <input type="text" class="form-control" value="<?php echo $slide->heading; ?>" id="title" placeholder="Slide Title" name="title">
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="description" class="col-sm-3 control-label">Slide Description</label>
-                <div class="col-sm-9">
-                    <textarea class="form-control" id="description" placeholder="Description about slide. Leave blank if not applicable." name="description"><?php echo $slide->content; ?></textarea>
+                    <input type="text" class="form-control" id="title" placeholder="Gallery Title" name="title">
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-sm-3 control-label" for="InputFile">File input</label>
                 <div class="col-sm-9">
                     <input type="file" id="InputFile" name="userFile">
-                    <p class="help-block">only .jpg pics. Leave it blank if not applicable</p>
+                    <p class="help-block">Required</p>
                 </div>
             </div>
             <div class="form-group">
                 <div class="col-sm-offset-3 col-sm-9">
-                    <button type="submit" class="btn btn-primary">Save Slide</button>
+                    <button type="submit" class="btn btn-primary">Add New Gallery</button>
                 </div>
             </div>
             </form>

@@ -2,8 +2,8 @@
 /**
  * Created by PhpStorm.
  * User: Kodemania
- * Date: 20/10/2015
- * Time: 2:08 AM
+ * Date: 26/10/2015
+ * Time: 8:59 PM
  */
     $this->load->view('admin/includes/head.php');
 ?>
@@ -18,8 +18,8 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-lg-6 col-md-6 col-sm-6 col-md-offset-3 col-lg-offset-3 col-sm-offset-3">
-            <h2 class="text-center">Add New Event</h2>
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            <h2 class="text-center">Add New Blog Post</h2>
             <br>
             <?php if(validation_errors()){
                 ?>
@@ -35,39 +35,41 @@
                 </div>
             <?php
             } ?>
-            <?php echo form_open_multipart('admin/addEventProcess',array('class'=>"form-horizontal")); ?>
+            <?php echo form_open_multipart('admin/addBlogPostProcess',array('class'=>"form-horizontal")); ?>
             <div class="form-group">
-                <label for="title" class="col-sm-3 control-label">Event Title</label>
+                <label for="title" class="col-sm-3 control-label">Blog Title</label>
                 <div class="col-sm-9">
-                    <input type="text" class="form-control" id="title" placeholder="Event Title" name="title">
+                    <input type="text" class="form-control" id="title" placeholder="Blog Title" name="title">
                 </div>
             </div>
             <div class="form-group">
-                <label for="description" class="col-sm-3 control-label">Description</label>
+                <label for="category" class="col-sm-3 control-label">Category</label>
                 <div class="col-sm-9">
-                    <textarea class="form-control" id="description" placeholder="Description about event. Leave blank if not applicable." name="description"></textarea>
+                    <select id="category" name="category" class="form-control">
+                        <option>Select Category</option>
+                        <?php foreach($categories as $category){
+                            ?>
+                            <option value="<?php echo $category->id; ?>"><?php echo $category->category; ?></option>
+                        <?php
+                        } ?>
+                    </select>
                 </div>
             </div>
             <div class="form-group">
-                <label for="type" class="col-sm-3 control-label">Type</label>
+                <label for="description" class="col-sm-3 control-label">body</label>
                 <div class="col-sm-9">
-                    <input type="text" class="form-control" id="type" placeholder="Event Type" name="type">
+                    <textarea class="form-control" id="description" placeholder="Body of Blog Post. Leave blank if not applicable." name="description"></textarea>
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-3 control-label" for="InputCity">City</label>
+                <label for="excerpt" class="col-sm-3 control-label">Excerpt</label>
                 <div class="col-sm-9">
-                    <input type="text" id="InputCity" class="form-control" name="city" placeholder="City">
+                    <textarea class="form-control" id="excerpt" placeholder="Excerpt of Blog Post. Leave blank if not applicable." name="excerpt"></textarea>
                 </div>
             </div>
+
             <div class="form-group">
-                <label class="col-sm-3 control-label" for="InputCountry">Country</label>
-                <div class="col-sm-9">
-                    <input type="text" id="InputCountry" class="form-control" name="country" placeholder="Country">
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="title" class="col-sm-3 control-label">Event Date</label>
+                <label for="title" class="col-sm-3 control-label">Published date</label>
                 <div class="col-sm-2">
                     <select class="form-control" name="day">
                         <?php for($i=1; $i<=31;$i++){
@@ -101,7 +103,7 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-3 control-label" for="InputFile">File input</label>
+                <label class="col-sm-3 control-label" for="InputFile">Featured image</label>
                 <div class="col-sm-9">
                     <input type="file" id="InputFile" name="userFile">
                     <p class="help-block">only .jpg pics. Leave it blank if not applicable</p>
@@ -109,7 +111,7 @@
             </div>
             <div class="form-group">
                 <div class="col-sm-offset-3 col-sm-9">
-                    <button type="submit" class="btn btn-primary">Add New Event</button>
+                    <button type="submit" class="btn btn-primary">Add New Blog Post</button>
                 </div>
             </div>
             </form>
@@ -122,5 +124,16 @@
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="<?php echo base_url('includes/js/bootstrap.js'); ?>"></script>
 
+<script src="<?php echo base_url('includes/includes/ckeditor/ckeditor.js'); ?>"></script>
+
+<script>
+    // Replace the <textarea id="desc"> with a CKEditor
+    // instance, using default configuration.
+    CKEDITOR.replace( 'description' );
+
+    // Replace the <textarea id="excerpt"> with a CKEditor
+    // instance, using default configuration.
+    CKEDITOR.replace( 'excerpt' );
+</script>
 </body>
 </html>

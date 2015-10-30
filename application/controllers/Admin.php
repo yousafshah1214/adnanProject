@@ -665,41 +665,39 @@ class Admin extends CI_Controller{
 
         // validation and file validation plus upload.
         if($this->form_validation->run() == true) {
-            if (strlen($_FILES['userFile']['name']) > 0) {
-                // file is submitted and have to upload it.
-                if ($this->upload->do_upload('userFile')) {
-                    // getting file data for upload.
-                    $img = $this->upload->data();
-                }
-                else{
-                    $uploadErrors = $this->upload->display_errors();
-                }
+            if ($this->upload->do_upload('userFile')) {
+                // getting file data for upload.
+                $img = $this->upload->data();
+
+                $file_name = $img['file_name'];
+
+                // getting data from user input.
+                $desc = $this->security->xss_clean($this->input->post('description'));
+                $title = $this->security->xss_clean($this->input->post('title'));
+
+                // data array for model.
+                $data['desc']       = $desc;
+                $data['title']    = $title;
+                $data['file'] = $file_name;
+
+                // inserting data into database
+                $this->Admin_model->insert_slide($data);
+
+                // redirect to all events page.
+                redirect('admin/allslides');
             }
+            else{
 
-            $file_name = $img['file_name'];
+                $uploadErrors = $this->upload->display_errors();
 
-            // getting data from user input.
-            $desc = $this->security->xss_clean($this->input->post('description'));
-            $title = $this->security->xss_clean($this->input->post('title'));
+                // showing add page with errors
 
-            // data array for model.
-            $data['desc']       = $desc;
-            $data['title']    = $title;
-
-            if(strlen($file_name) > 0){
-                // file is uploading and has to include in database
-                $data['file'] = $img;
+                $this->session->set_flashdata('error', $uploadErrors);
+                $this->addSlide();
             }
-
-            // inserting data into database
-            $this->Admin_model->insert_slide($data);
-
-            // redirect to all events page.
-            redirect('admin/allslides');
         }
         else {
             // showing add event page with errors
-            $this->session->set_flashdata('error', $uploadErrors);
             $this->addSlide();
         }
     }
@@ -813,7 +811,320 @@ class Admin extends CI_Controller{
         }
     }
 
+    public function allblogposts(){
+        // showing all blog posts
 
+        $data['blogs'] = $this->Admin_model->get_all_blogPosts();
+
+        $this->load->view('admin/allBlogPosts.php',$data);
+    }
+
+    public function addBlogpost(){
+        // show add blog post page.
+        $this->db->where('type','blog');
+        $query  = $this->db->get('categories');
+        if($query->num_rows() > 0){
+            $data['categories']     =   $query->result();
+        }
+        else{
+            $data['categories']     =   array();
+        }
+
+
+        return $this->load->view('admin/addBlogPost.php',$data);
+    }
+
+    public function addBlogPostProcess(){
+        // add blog Post process
+
+        // setting rules for validation
+        $this->form_validation->set_rules('title','Blog Title','trim|required');
+        $this->form_validation->set_rules('description','Description','trim|required');
+        $this->form_validation->set_rules('excerpt','Excerpt','trim|required');
+        $this->form_validation->set_rules('day','Day','trim|required');
+        $this->form_validation->set_rules('month','Month','trim|required');
+        $this->form_validation->set_rules('year','Year','trim|required');
+        $this->form_validation->set_rules('category','Category','trim|required|numeric');
+
+        $this->load->library('upload');
+
+        // config for file upload and file validation
+        $config['upload_path'] = './includes/images/';
+        $config['allowed_types'] = 'jpg|png|jpeg';
+
+        $this->upload->initialize($config);
+
+        $uploadErrors = null;
+        $img = null;
+
+        // validation and file validation plus upload.
+        if($this->form_validation->run() == true) {
+            if ($this->upload->do_upload('userFile')) {
+                // getting file data for upload.
+                $img = $this->upload->data();
+
+                $file_name = $img['file_name'];
+
+                // getting data from user input.
+                $desc = $this->security->xss_clean($this->input->post('description'));
+                $title = $this->security->xss_clean($this->input->post('title'));
+                $excerpt = $this->security->xss_clean($this->input->post('excerpt'));
+                $day = $this->security->xss_clean($this->input->post('day'));
+                $month = $this->security->xss_clean($this->input->post('month'));
+                $year = $this->security->xss_clean($this->input->post('year'));
+                $category = $this->security->xss_clean($this->input->post('category'));
+
+
+                // data array for model.
+                $data['description']        =   $desc;
+                $data['title']              =   $title;
+                $data['file']               =   $file_name;
+                $data['excerpt']            =   $excerpt;
+                $data['date']               =   mktime(0,0,0,$month,$day,$year);
+                $data['category']           =   $category;
+
+                // inserting data into database
+                $this->Admin_model->insert_blog_post($data);
+
+                // redirect to all events page.
+                redirect('admin/allblogposts');
+            }
+            else{
+
+                $uploadErrors = $this->upload->display_errors();
+
+                // showing add page with errors
+
+                $this->session->set_flashdata('error', $uploadErrors);
+                $this->addBlogpost();
+            }
+        }
+        else {
+            // showing add event page with errors
+            $this->addBlogpost();
+        }
+    }
+
+    public function editBlog(){
+        // show blog edit page with blogpost.
+
+        $id = $this->security->xss_clean($this->uri->segment(3,0));
+
+        $this->db->where('id',$id);
+
+        $this->db->where('type','blog');
+
+        $query = $this->db->get('posts');
+
+        if($query->num_rows() == 1){
+            // blog found
+            $result = $query->result();
+
+            $data['blog']   =   $result[0];
+
+            $this->db->where('type','blog');
+            $query  = $this->db->get('categories');
+            if($query->num_rows() > 0){
+                $data['categories']     =   $query->result();
+            }
+            else{
+                $data['categories']     =   array();
+            }
+
+            return $this->load->view('admin/editBlog.php',$data);
+        }
+
+        redirect('admin/allblogposts');
+    }
+
+    public function editBlogPostProcess(){
+        // add blog Post process
+
+        // setting rules for validation
+        $this->form_validation->set_rules('title','Blog Title','trim|required');
+        $this->form_validation->set_rules('description','Description','trim|required');
+        $this->form_validation->set_rules('excerpt','Excerpt','trim|required');
+        $this->form_validation->set_rules('day','Day','trim|required');
+        $this->form_validation->set_rules('month','Month','trim|required');
+        $this->form_validation->set_rules('year','Year','trim|required');
+        $this->form_validation->set_rules('id','ID','trim|required|numeric');
+        $this->form_validation->set_rules('category','Category','trim|required|numeric');
+
+        $this->load->library('upload');
+
+        // config for file upload and file validation
+        $config['upload_path'] = './includes/images/';
+        $config['allowed_types'] = 'jpg|png|jpeg';
+
+        $this->upload->initialize($config);
+
+        $uploadErrors = null;
+        $img = null;
+
+        // validation and file validation plus upload.
+        if($this->form_validation->run() == true) {
+            if (strlen($_FILES['userFile']['name']) > 0) {
+                // file is submitted and have to upload it.
+                if ($this->upload->do_upload('userFile')) {
+                    // getting file data for upload.
+                    $img = $this->upload->data();
+                }
+                else{
+                    $uploadErrors = $this->upload->display_errors();
+
+                    // showing add page with errors
+
+                    $this->session->set_flashdata('error', $uploadErrors);
+                    $this->addBlogpost();
+                }
+            }
+
+            $file_name = $img['file_name'];
+
+            // getting data from user input.
+            $desc = $this->security->xss_clean($this->input->post('description'));
+            $title = $this->security->xss_clean($this->input->post('title'));
+            $excerpt = $this->security->xss_clean($this->input->post('excerpt'));
+            $day = $this->security->xss_clean($this->input->post('day'));
+            $month = $this->security->xss_clean($this->input->post('month'));
+            $year = $this->security->xss_clean($this->input->post('year'));
+            $id = $this->security->xss_clean($this->input->post('id'));
+            $category = $this->security->xss_clean($this->input->post('category'));
+
+
+            // data array for model.
+            $data['description']        =   $desc;
+            $data['title']              =   $title;
+            $data['excerpt']            =   $excerpt;
+            $data['date']               =   mktime(0,0,0,$month,$day,$year);
+            $data['id']                 =   $id;
+            $data['category']           =   $category;
+
+            if(strlen($file_name) > 0){
+                // file is uploading and has to include in database
+                $data['file'] = $file_name;
+            }
+
+            // inserting data into database
+            $this->Admin_model->update_blog_post($data);
+
+            // redirect to all events page.
+            redirect('admin/allblogposts');
+        }
+        else {
+            // showing add event page with errors
+            $this->editBlog();
+        }
+    }
+
+    public function deleteBlog(){
+        // delete blog
+
+        $id = $this->security->xss_clean($this->uri->segment(3,0));
+
+        $this->db->where('id',$id);
+        $this->db->where('type','blog');
+        $query = $this->db->get('posts');
+
+        if($query->num_rows() == 1){
+            $this->Admin_model->delete_blog_post($id);
+        }
+
+        redirect ('admin/allblogposts');
+    }
+
+    public function allgalleries(){
+        // all galleries pic
+
+        $this->db->order_by('id','DESC');
+
+        $this->db->where('type','gallery');
+
+        $query = $this->db->get('posts');
+
+        $data['galleries']   =   $query->result();
+
+        return $this->load->view('admin/allGalleries.php',$data);
+    }
+
+    public function addGallery(){
+        // add gallery page.
+
+        return $this->load->view('admin/addGallery.php');
+    }
+
+    public function addGalleryProcess(){
+        // edit Event Process
+
+        // setting rules for validation
+        $this->form_validation->set_rules('title','Event Title','trim|required');
+
+        $this->load->library('upload');
+
+        // config for file upload and file validation
+        $config['upload_path'] = './includes/images/';
+        $config['allowed_types'] = 'jpg|png|jpeg';
+
+        $this->upload->initialize($config);
+
+        $uploadErrors = null;
+        $img = null;
+
+        // validation and file validation plus upload.
+        if($this->form_validation->run() == true) {
+                if ($this->upload->do_upload('userFile')) {
+                    // getting file data for upload.
+                    $img = $this->upload->data();
+                }
+                else{
+                    $uploadErrors = $this->upload->display_errors();
+
+                    // showing add event page with errors
+                    $this->session->set_flashdata('error', $uploadErrors);
+                    return $this->addGallery();
+                }
+
+            $file_name = $img['file_name'];
+
+            // getting data from user input.
+            $title = $this->security->xss_clean($this->input->post('title'));
+
+            // data array for model.
+            $data['title'] = $title;
+            $data['file'] = $file_name;
+
+
+            // inserting data into database
+            $this->Admin_model->insert_gallery($data);
+
+            // redirect to all events page.
+            redirect('admin/allGalleries');
+        }
+        else {
+            // showing add event page with errors
+            $this->session->set_flashdata('error', $uploadErrors);
+            return $this->addGallery();
+        }
+    }
+
+    public function deleteGallery (){
+        // delete gallery on ID
+
+        $id = $this->security->xss_clean($this->uri->segment(3,0));
+
+        $this->db->where('id',$id);
+        $this->db->where('type','gallery');
+
+        $query = $this->db->get('posts');
+
+        if($query->num_rows() == 1){
+            // delete the gallery record.
+
+            $this->Admin_model->delete_gallery($id);
+
+        }
+        redirect('admin/allgalleries');
+    }
 
     public function logout(){
         $arr = array(

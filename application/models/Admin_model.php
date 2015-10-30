@@ -137,11 +137,7 @@ class Admin_model extends CI_Model{
         $data['content']            =   $slideData['desc'];
         $data['heading']            =   $slideData['title'];
         $data['type']               =   'slide';
-
-        if(strlen($slideData['file']) > 0){
-            // file is uploading and has to include in database
-            $data['featured_img']   =   $slideData['file'];
-        }
+        $data['featured_image']   =   $slideData['file'];
 
         $this->db->insert('posts',$data);
     }
@@ -154,7 +150,7 @@ class Admin_model extends CI_Model{
 
         if(strlen($slideData['file']) > 0){
             // file is uploading and has to include in database
-            $data['featured_img']   =   $slideData['file'];
+            $data['featured_image']   =   $slideData['file'];
         }
 
         $this->db->where('id',$slideData['id']);
@@ -164,6 +160,61 @@ class Admin_model extends CI_Model{
     public function delete_slide($id){
         $this->db->where('id',$id);
         $this->db->where('type','slide');
+        $this->db->delete('posts');
+    }
+
+    public function get_all_blogposts(){
+        // get all blogposts
+
+        $this->db->where('type','blog');
+        $query = $this->db->get('posts');
+        return $query->result();
+    }
+
+    public function insert_blog_post($blogData){
+        $data['content']            =   $blogData['description'];
+        $data['heading']            =   $blogData['title'];
+        $data['type']               =   'blog';
+        $data['featured_image']     =   $blogData['file'];
+        $data['date']               =   $blogData['date'];
+        $data['excerpt']            =   $blogData['excerpt'];
+        $data['category_id']        =   $blogData['category'];
+
+        $this->db->insert('posts',$data);
+    }
+
+    public function update_blog_post($blogData){
+
+        $data['content']            =   $blogData['description'];
+        $data['heading']            =   $blogData['title'];
+        $data['type']               =   'blog';
+        if (strlen($blogData['file']) > 0){
+            $data['featured_image']     =   $blogData['file'];
+        }
+        $data['category_id']        =   $blogData['category'];
+        $data['date']               =   $blogData['date'];
+        $data['excerpt']            =   $blogData['excerpt'];
+
+        $this->db->where('id',$blogData['id']);
+        $this->db->update('posts',$data);
+    }
+
+    public function delete_blog_post($id){
+        // delete blog post
+        $this->db->where('id',$id);
+        $this->db->delete('posts');
+    }
+
+    public function insert_gallery($galleryData){
+        $data['heading']            =   $galleryData['title'];
+        $data['featured_image']     =   $galleryData['file'];
+        $data['type']               =   'gallery';
+
+        $this->db->insert('posts',$data);
+    }
+
+    public function delete_gallery($id){
+        $this->db->where('id',$id);
         $this->db->delete('posts');
     }
 

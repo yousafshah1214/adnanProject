@@ -23,7 +23,7 @@
                     <!-- SLIDE  -->
                     <li data-delay="5000" data-masterspeed="600" data-slotamount="7" data-transition="fade">
                         <!-- MAIN IMAGE -->
-                        <img src="<?php echo base_url("includes/images/img2.jpg"); ?>" alt="">
+                        <img src="<?php echo base_url("includes/images/".$slide->featured_image); ?>" alt="">
                         <!-- LAYER NR. 2 -->
                         <div class="tp-caption sfr whiter h2 tp-resizeme"
                              data-x="right"
