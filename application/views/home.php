@@ -93,7 +93,7 @@
                 <div class="nav-tabs-bar">
                     <ul class="nav nav-tabs">
                         <li class="active"> <a data-toggle="tab" href="#sampletab1">Our Mission</a> </li>
-                        <li> <a data-toggle="tab" href="#sampletab2">Why you should join us</a> </li>
+                        <li> <a data-toggle="" href="<?php echo site_url('about'); ?>">About Us</a> </li>
                     </ul>
                     <a href="#" class="pull-right">more about us <i class="fa fa-angle-right"></i></a>
                 </div>
@@ -102,7 +102,7 @@
                         <div class="row">
                         	<div class="col-md-8 col-sm-8">
                         		<p class="lead"><?php echo $overview->heading; ?></p>
-                        		<p><?php echo $overview->content; ?></p>
+                        		<p><?php echo $overview->excerpt; ?></p>
                                 <hr class="md"><div class="clearfix"></div>
                                 <a href="#" class="btn btn-lg btn-primary"><i class="fa fa-cloud-download"></i> Download Form</a>
                             </div>
@@ -111,29 +111,29 @@
                             </div>
                         </div>
                     </div>
-                    <div id="sampletab2" class="tab-pane">
-                    	<div class="row">
-                            <?php
-                                $id = 0;
-                                $arr = array('label-info','label-warning','label-success');
-                                foreach($why_join as $content){
-                                    ?>
-                                    <div class="col-md-4 col-sm-4">
-                                        <div class="icon-block"><span class="icon <?php echo $arr[$id]; ?>"><i class="fa <?php echo $content->icon ?>"></i></span>
-                                            <h2><?php echo $content->heading; ?></h2>
-                                            <p><?php echo $content->content; ?></p>
-                                        </div>
-                                    </div>
-                            <?php
-                                    $id = $id + 1;
-                                }
-                            ?>
-                            <div class="text-align-center">
-                            	<div class="spacer-20"></div>
-                            	<a href="#" class="btn btn-primary btn-lg secondary-color-bg">Join now</a>
-                            </div>
-                        </div>
-                    </div>
+<!--                    <div id="sampletab2" class="tab-pane">-->
+<!--                    	<div class="row">-->
+<!--                            --><?php
+//                                $id = 0;
+//                                $arr = array('label-info','label-warning','label-success');
+//                                foreach($why_join as $content){
+//                                    ?>
+<!--                                    <div class="col-md-4 col-sm-4">-->
+<!--                                        <div class="icon-block"><span class="icon --><?php //echo $arr[$id]; ?><!--"><i class="fa --><?php //echo $content->icon ?><!--"></i></span>-->
+<!--                                            <h2>--><?php //echo $content->heading; ?><!--</h2>-->
+<!--                                            <p>--><?php //echo $content->content; ?><!--</p>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                            --><?php
+//                                    $id = $id + 1;
+//                                }
+//                            ?>
+<!--                            <div class="text-align-center">-->
+<!--                            	<div class="spacer-20"></div>-->
+<!--                            	<a href="#" class="btn btn-primary btn-lg secondary-color-bg">Join now</a>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
                 </div>
             </div>
         </div>

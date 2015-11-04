@@ -44,7 +44,6 @@
                     <ul class="dropdown-menu">
                         <li><a href="<?php echo site_url('admin/editChairmanMessage'); ?>">Chairman Message</a></li>
                         <li><a href="<?php echo site_url('admin/editOverview'); ?>">Program Overview</a></li>
-                        <li><a href="#">About Us</a></li>
                     </ul>
                 </li>
             </ul>
