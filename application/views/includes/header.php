@@ -39,11 +39,8 @@
                    		<li><a href="<?php echo site_url("home"); ?>">Home</a></li>
                         <li><a href="<?php echo site_url("blog"); ?>">Blog</a></li>
                         <li><a href="<?php echo site_url("gallery"); ?>">Gallery</a>
-                        <li><a href="../events.php">Event</a></li>
-                        <li><a href="../projects.php">Projects</a></li>
-                        <li><a href="../single-event.php">Single Event</a></li>
-                        <li><a href="../blog-post.php">Blog Post</a></li>
-                        <li><a href="#">Contact</a></li>
+                        <li><a href="<?php echo site_url("event"); ?>">Event</a></li>
+                        <li><a href="<?php echo site_url("contact"); ?>">Contact</a></li>
                     </ul>
                 </nav>
                 <!-- Mobile Menu Trigger Icon -->

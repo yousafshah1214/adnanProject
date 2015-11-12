@@ -917,7 +917,7 @@ html[xmlns] .slides {
 	right:0;
 	left:auto;
 }
-.nav-np .next, .nav-np .prev{
+.nav-np .next a, .nav-np .prev a{
 	color:#666;
 	position:absolute;
 	top:9px;
@@ -941,14 +941,14 @@ html[xmlns] .slides {
 	transition:all 0.3s ease 0.1s;
 }
 
-.nav-np .prev{
+.nav-np .prev a{
 	left:auto;
 	right:30px;
 }
-.nav-np .prev:before{
+.nav-np .prev a:before{
   content: "\f104";
 }
-.nav-np .next:before{
+.nav-np .next a:before{
   content: "\f105";
 }
 .border-cols{

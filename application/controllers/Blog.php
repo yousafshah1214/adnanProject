@@ -14,16 +14,12 @@ class Blog extends CI_Controller{
 
         $page = $this->security->xss_clean($this->uri->segment(3,0));
         if($page == 0){
-            $start = ($page * $perpage);
+            $start = 0;
         }
         else{
-            $start = ($page * $perpage) - 1;
+            $start = ($page-1) * $perpage;
         }
 
-        $end = ($start + $perpage);
-
-//        echo $start.'   '.$end;
-//        die();
         // get total blog posts
         $this->db->where('type','blog');
         $this->db->order_by('id','DESC');
@@ -32,7 +28,7 @@ class Blog extends CI_Controller{
 
         // getting blog posts for page
 
-        $this->db->limit($end,$start);
+        $this->db->limit($perpage,$start);
         $this->db->where('type','blog');
         $this->db->order_by('id','DESC');
         $query      =   $this->db->get('posts');
@@ -71,6 +67,89 @@ class Blog extends CI_Controller{
         }
         $data['blogs']          =       $query->result();
         return $this->load->view('blog.php',$data);
+    }
+
+    public function category(){
+
+        $category = $this->security->xss_clean($this->uri->segment(3,0));
+
+        $perpage = 6;
+
+        $page = $this->security->xss_clean($this->uri->segment(4,0));
+        if($page == 0){
+            $start = 0;
+        }
+        else{
+            $start = ($page-1) * $perpage;
+        }
+
+
+//        echo $start.'   '.$end;
+//        die();
+
+        // get category id
+        $this->db->where('category',$category);
+        $this->db->where('type','blog');
+        $categoryQuery = $this->db->get('categories');
+
+        if($categoryQuery->num_rows() == 1){
+            // category is found
+            $categorydata = $categoryQuery->result();
+            $category = $categorydata[0];
+            // get total blog posts
+            $this->db->where('category_id',$category->id);
+            $this->db->where('type','blog');
+            $this->db->order_by('id','DESC');
+
+            $queryTotal      =   $this->db->get('posts');
+
+            // getting blog posts for page
+
+            $this->db->where('category_id',$category->id);
+            $this->db->where('type','blog');
+            $this->db->limit($perpage,$start);
+            $this->db->order_by('id','DESC');
+            $query      =   $this->db->get('posts');
+
+            // starting pagination
+            $this->load->library('pagination');
+
+            $config['base_url']     =   site_url('blog/index');
+            $config['total_rows']   =   $queryTotal->num_rows();
+            $config['per_page']     =   $perpage;
+            $config['use_page_numbers'] = TRUE;
+
+            $config['full_tag_open'] = '<ul class="pagination">';
+            $config['full_tag_close'] = '</ul>';
+            $config['num_tag_open'] = '<li>';
+            $config['num_tag_close'] = '</li>';
+            $config['cur_tag_open'] = '<li class="active"><a>';
+            $config['cur_tag_close'] = '</a></li>';
+            $config['prev_tag_open'] = '<li>';
+            $config['prev_tag_close'] = '</li>';
+            $config['next_tag_open'] = '<li>';
+            $config['next_tag_close'] = '</li>';
+
+
+            $this->pagination->initialize($config);
+
+            $data['pagination']         =       $this->pagination->create_links();
+
+            $this->db->where('type','blog');
+            $query2 = $this->db->get('categories');
+            if($query2->num_rows() > 0){
+                $data['categories']     =       $query2->result();
+            }
+            else{
+                $data['categories']     =       array();
+            }
+            $data['blogs']          =       $query->result();
+            return $this->load->view('blog.php',$data);
+        }
+        else{
+            // category is not found
+            return show_404();
+        }
     }
 
     public function post(){

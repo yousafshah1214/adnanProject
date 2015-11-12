@@ -74,6 +74,8 @@ class Admin_model extends CI_Model{
         $data['city']           =   $eventData['city'];
         $data['country']        =   $eventData['country'];
         $data['featured_image'] =   $eventData['file'];
+        $data['featured']       =   $eventData['featured'];
+        $data['location']       =   $eventData['location'];
 
         $this->db->insert('events',$data);
     }
@@ -86,6 +88,8 @@ class Admin_model extends CI_Model{
         $data['city']           =   $eventData['city'];
         $data['country']        =   $eventData['country'];
         $data['featured_image'] =   $eventData['file'];
+        $data['featured']       =   $eventData['featured'];
+        $data['location']       =   $eventData['location'];
 
         $this->db->where('id',$eventData['id']);
         $this->db->update('events',$data);
@@ -218,6 +222,30 @@ class Admin_model extends CI_Model{
         $this->db->delete('posts');
     }
 
+    public function get_all_categories(){
+        // get all categories
+        $query= $this->db->get('categories');
+
+        return $query->result();
+    }
+
+    public function insert_category($data){
+        // add category to database
+        $this->db->insert('categories',$data);
+    }
+
+    public function update_category($data){
+        // update category
+        $this->db->where('id',$data['id']);
+        $this->db->update('categories',$data);
+    }
+
+    public function delete_category($id){
+        // delete category
+        $this->db->where('id',$id);
+        $this->db->delete('categories');
+    }
+
     public function verifyLogin(){
         //password_hash("rasmuslerdorf", PASSWORD_DEFAULT);
         $username = $this->security->xss_clean($this->input->post('username'));
@@ -244,10 +272,6 @@ class Admin_model extends CI_Model{
             }
         }
         else{
-//            echo "<pre>";
-//            print_r($query);
-//            echo "</pre>";
-//            die();
             return false;
         }
     }

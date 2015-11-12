@@ -55,6 +55,12 @@
                 </div>
             </div>
             <div class="form-group">
+                <label class="col-sm-3 control-label" for="InputLocation">Location</label>
+                <div class="col-sm-9">
+                    <input type="text" id="InputLocation" class="form-control" name="location" placeholder="Location of Event">
+                </div>
+            </div>
+            <div class="form-group">
                 <label class="col-sm-3 control-label" for="InputCity">City</label>
                 <div class="col-sm-9">
                     <input type="text" id="InputCity" class="form-control" name="city" placeholder="City">
@@ -98,6 +104,13 @@
                         <?php
                         } ?>
                     </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label" for="InputFeatured">Priority</label>
+                <div class="col-sm-9">
+                    <input type="checkbox" id="InputFeatured" value="1" name="featured"> Featured Event
+                    <p class="help-block">Check this box if event is featured</p>
                 </div>
             </div>
             <div class="form-group">

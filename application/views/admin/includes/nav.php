@@ -27,6 +27,7 @@
                 <li><a href="<?php echo site_url('admin/allslides'); ?>">Slides</a></li>
                 <li><a href="<?php echo site_url('admin/allblogposts'); ?>">Blogposts</a></li>
                 <li><a href="<?php echo site_url('admin/allgalleries'); ?>">Gallery</a></li>
+                <li><a href="<?php echo site_url('admin/allcategories'); ?>">Categories</a></li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Add<span class="caret"></span></a>
                     <ul class="dropdown-menu">
@@ -37,6 +38,7 @@
                         <li><a href="<?php echo site_url('admin/addGallery'); ?>">Gallery</a></li>
                         <li role="separator" class="divider"></li>
                         <li><a href="<?php echo site_url('admin/addEvent'); ?>">Event</a></li>
+                        <li><a href="<?php echo site_url('admin/addCategory'); ?>">Category</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">

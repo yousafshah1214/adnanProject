@@ -289,12 +289,17 @@ class Admin extends CI_Controller{
         if(strlen($this->input->post('description')) > 0){
             $this->form_validation->set_rules('description','Description','trim|required');
         }
+        // optional featured value
+        if(strlen($this->input->post('featured')) > 0){
+            $this->form_validation->set_rules('featured','Featured','trim|required|numeric');
+        }
         $this->form_validation->set_rules('type','Type','trim|required');
         $this->form_validation->set_rules('city','Event City','trim|required');
         $this->form_validation->set_rules('country','Event Country','trim|required');
         $this->form_validation->set_rules('day','Day','trim|required|numeric');
         $this->form_validation->set_rules('month','Month','trim|required|numeric');
         $this->form_validation->set_rules('year','Year','trim|required|numeric');
+        $this->form_validation->set_rules('location','Location','trim|required');
 
         $this->load->library('upload');
 
@@ -331,6 +336,8 @@ class Admin extends CI_Controller{
             $day = $this->security->xss_clean($this->input->post('day'));
             $month = $this->security->xss_clean($this->input->post('month'));
             $year = $this->security->xss_clean($this->input->post('year'));
+            $featured = $this->security->xss_clean($this->input->post('featured'));
+            $location = $this->security->xss_clean($this->input->post('location'));
 
             // data array for model.
             $data['title'] = $title;
@@ -340,6 +347,13 @@ class Admin extends CI_Controller{
             $data['file'] = $file_name;
             $data['city'] = $city;
             $data['country'] = $country;
+            $data['location'] = $location;
+            if(isset($featured)){
+                $data['featured']   =   1;
+            }
+            else{
+                $data['featured']   =   0;
+            }
 
             // inserting data into database
             $this->Admin_model->insert_event($data);
@@ -387,6 +401,10 @@ class Admin extends CI_Controller{
         if(strlen($this->input->post('description')) > 0){
             $this->form_validation->set_rules('description','Description','trim|required');
         }
+        // optional featured value
+        if(strlen($this->input->post('featured')) > 0){
+            $this->form_validation->set_rules('featured','Featured','trim|required|numeric');
+        }
         $this->form_validation->set_rules('type','Type','trim|required');
         $this->form_validation->set_rules('city','Event City','trim|required');
         $this->form_validation->set_rules('country','Event Country','trim|required');
@@ -394,6 +412,7 @@ class Admin extends CI_Controller{
         $this->form_validation->set_rules('month','Month','trim|required|numeric');
         $this->form_validation->set_rules('year','Year','trim|required|numeric');
         $this->form_validation->set_rules('id','Event ID','trim|required|numeric');
+        $this->form_validation->set_rules('location','Location','trim|required');
 
         $this->load->library('upload');
 
@@ -431,6 +450,8 @@ class Admin extends CI_Controller{
             $month = $this->security->xss_clean($this->input->post('month'));
             $year = $this->security->xss_clean($this->input->post('year'));
             $id = $this->security->xss_clean($this->input->post('id'));
+            $featured = $this->security->xss_clean($this->input->post('featured'));
+            $location = $this->security->xss_clean($this->input->post('location'));
 
             // data array for model.
             $data['title'] = $title;
@@ -441,7 +462,13 @@ class Admin extends CI_Controller{
             $data['date'] = mktime(0, 0, 0, $month, $day, $year);
             $data['file'] = $file_name;
             $data['id']   = $id;
-
+            $data['location']   = $location;
+            if(isset($featured)){
+                $data['featured']   =   1;
+            }
+            else{
+                $data['featured']   =   0;
+            }
 
             // inserting data into database
             $this->Admin_model->update_event($data);
@@ -1124,6 +1151,135 @@ class Admin extends CI_Controller{
 
         }
         redirect('admin/allgalleries');
+    }
+
+    public function allCategories(){
+        // show all categories
+        $data['categories']     =   $this->Admin_model->get_all_categories();
+
+        $this->load->view('admin/allCategories.php',$data);
+    }
+
+    public function addCategory(){
+        // show add gallery page
+
+        return $this->load->view('admin/addCategory.php');
+    }
+
+    public function addCategoryProcess(){
+        // add category process
+
+        // setting rules for validation
+        $this->form_validation->set_rules('title','Category Title','trim|required');
+        $this->form_validation->set_rules('type','Category Type','trim|required');
+
+        // validation and file validation plus upload.
+        if($this->form_validation->run() == true) {
+
+            // getting data from user input.
+            $title = $this->security->xss_clean($this->input->post('title'));
+            $type = $this->security->xss_clean($this->input->post('type'));
+
+            // category dublicate check
+            $this->db->where('type',$type);
+            $this->db->where('category',$title);
+            $query = $this->db->get('categories');
+            if($query->num_rows() > 0){
+                // category already exists Show error
+                $this->session->set_flashdata('error', "This category already exist.");
+                return $this->addCategory();
+            }
+            else{
+                // insert category
+                $data['category'] = $title;
+                $data['type'] = $type;
+
+                // inserting data into database
+                $this->Admin_model->insert_category($data);
+            }
+            // redirect to all events page.
+            redirect('admin/allCategories');
+        }
+        else {
+            // showing add event page with errors
+            return $this->addCategory();
+        }
+    }
+
+    public function editCategory($id = null){
+        // edit category page.
+
+        $id = $this->security->xss_clean($this->uri->segment(3,0));
+
+        $this->db->where('id',$id);
+        $query = $this->db->get('categories');
+
+        if($query->num_rows() == 1){
+            // category found
+            $result             =   $query->result();
+            $categoryObj        =   $result[0];
+            $data['category']   =   $categoryObj;
+            return $this->load->view('admin/editCategory.php',$data);
+        }
+        else{
+            show_404('page');
+        }
+    }
+
+    public function editCategoryProcess(){
+        // setting rules for validation
+        $this->form_validation->set_rules('title','Category Title','trim|required');
+        $this->form_validation->set_rules('type','Category Type','trim|required');
+        $this->form_validation->set_rules('id','Category Id','trim|required|numeric');
+
+        // validation and file validation plus upload.
+        if($this->form_validation->run() == true) {
+
+            // getting data from user input.
+            $title = $this->security->xss_clean($this->input->post('title'));
+            $type = $this->security->xss_clean($this->input->post('type'));
+            $id = $this->security->xss_clean($this->input->post('id'));
+
+            // category dublicate check
+            $this->db->where('type',$type);
+            $this->db->where('category',$title);
+            $query = $this->db->get('categories');
+            if($query->num_rows() > 0){
+                // category already exists Show error
+                $this->session->set_flashdata('error', "This category already exist.");
+                redirect('admin/editCategory/'.$id);
+            }
+            else{
+                // Update category
+                $data['category'] = $title;
+                $data['type'] = $type;
+                $data['id']     =   $id;
+
+                // inserting data into database
+                $this->Admin_model->update_category($data);
+            }
+            // redirect to all events page.
+            redirect('admin/allCategories');
+        }
+        else {
+            // showing add event page with errors
+            return $this->editCategory($this->security->xss_clean($this->uri->segment(3,0)));
+        }
+    }
+
+    public function deleteCategory(){
+        // delete category.
+
+        $id = $this->security->xss_clean($this->uri->segment(3,0));
+
+        $this->db->where('id',$id);
+        $query = $this->db->get('categories');
+
+        if($query->num_rows() > 0){
+            // delete category
+            $this->Admin_model->delete_category($id);
+            redirect('admin/allcategories');
+        }
     }
 
     public function logout(){
